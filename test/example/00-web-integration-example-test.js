@@ -12,11 +12,10 @@ test('Set up env', t => {
   t.ok(sandbox, 'sandbox loaded')
 })
 
-let end // Saves a reference to be used later to shut down the sandbox
-test('Start sandbox', async t => {
+test('Start the Sandbox', async t => {
   t.plan(1)
-  end = await sandbox.start()
-  t.ok(end, 'Sandbox started!')
+  let result = await sandbox.start()
+  t.equal(result, 'Sandbox successfully started')
 })
 
 test('get / (continuation-passing style)', t => {
@@ -58,17 +57,10 @@ test('get / (async/await style)', async t => {
   }
 })
 
-test('Shut down sandbox', t=> {
+test('Shut down the Sandbox', async t => {
   t.plan(1)
-  end()
-  tiny.get({url},
-  function win (err, result) {
-    if (err) {
-      t.equal(err.code, 'ECONNREFUSED', 'Sandbox succssfully shut down')
-    } else {
-      t.fail('Sandbox did not shut down')
-    }
-  })
+  let result = await sandbox.end()
+  t.equal(result, 'Sandbox successfully shut down')
 })
 
 let didNotLoad = 'You are likely seeing 404 or ECONNREFUSED errors because you do not have a `get /` HTTP function and also do not have a `public/index.html` file\nPlease make use of one or the other to respond to web requests at the root of your application'
